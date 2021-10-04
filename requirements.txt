@@ -1,6 +1,7 @@
 dvc
 pandas
 scikit-learn
+zipfile36
 
 #local packages
 -e .

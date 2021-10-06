@@ -35,3 +35,14 @@ stages:
       - model_params.RF.n_jobs
     outs:
       - artifacts/model_dir/pipeline.model
+  
+  evaluate: 
+    cmd: python src/stage_04_evaluate.py --config=config/config.yaml --params=params.yaml
+    deps: 
+      - src/stage_04_evaluate.py
+      - src/utils/all_utils.py
+      - config/config.yaml
+      - artifacts/split_local_dir/test.csv
+      - artifacts/model_dir/pipeline.model
+    outs:
+      - artifacts/reports_dir/scores.json

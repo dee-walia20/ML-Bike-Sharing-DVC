@@ -4,15 +4,65 @@ stages:
     cmd: python src/stage_01_load_save.py --config=config/config.yaml
     deps:
     - path: config/config.yaml
-      md5: a94b09b6ae7b8c57380980afad5da493
-      size: 229
+      md5: de82bd299c9288c4183ac28f4505c7ac
+      size: 365
     - path: src/stage_01_load_save.py
       md5: 9817597e51432a1a7d15c9abc8f20b91
       size: 1192
     - path: src/utils/all_utils.py
-      md5: 785ef10da522108e8c3b4d86348e9fad
-      size: 340
+      md5: e855e3fb3e1ea462a489754c792ec07b
+      size: 498
     outs:
     - path: artifacts/raw_local_dir/data.csv
       md5: 7747b2efcdd3801b83c1cfce2d600c15
       size: 1161688
+  split_data:
+    cmd: python src/stage_02_split_data.py --config=config/config.yaml --params=params.yaml
+    deps:
+    - path: artifacts/raw_local_dir/data.csv
+      md5: 7747b2efcdd3801b83c1cfce2d600c15
+      size: 1161688
+    - path: config/config.yaml
+      md5: de82bd299c9288c4183ac28f4505c7ac
+      size: 365
+    - path: src/stage_02_split_data.py
+      md5: 03425603e919511f6ecca62b20234a90
+      size: 1665
+    - path: src/utils/all_utils.py
+      md5: e855e3fb3e1ea462a489754c792ec07b
+      size: 498
+    params:
+      params.yaml:
+        base.random_state: 43
+        base.test_size: 0.3
+    outs:
+    - path: artifacts/split_local_dir/test.csv
+      md5: 93da9200ffe12b2e1df777313f50c2d3
+      size: 348628
+    - path: artifacts/split_local_dir/train.csv
+      md5: 3cab5ca9e6ec19c3f05098c24cbf2d94
+      size: 813179
+  train:
+    cmd: python src/stage_03_train.py --config=config/config.yaml --params=params.yaml
+    deps:
+    - path: artifacts/split_local_dir/train.csv
+      md5: 3cab5ca9e6ec19c3f05098c24cbf2d94
+      size: 813179
+    - path: config/config.yaml
+      md5: de82bd299c9288c4183ac28f4505c7ac
+      size: 365
+    - path: src/stage_03_train.py
+      md5: eb9e45f6889e72c8c6362edd07a506f0
+      size: 1971
+    - path: src/utils/all_utils.py
+      md5: e855e3fb3e1ea462a489754c792ec07b
+      size: 498
+    params:
+      params.yaml:
+        model_params.RF.n_estimators: 300
+        model_params.RF.n_jobs: -1
+        model_params.RF.random_state: 42
+    outs:
+    - path: artifacts/model_dir/pipeline.model
+      md5: ab8e936ea92298fc9395fa7aba31f8cb
+      size: 174149761

@@ -7,3 +7,31 @@ stages:
       - config/config.yaml
     outs: 
       - artifacts/raw_local_dir/data.csv
+  
+  split_data: 
+    cmd: python src/stage_02_split_data.py --config=config/config.yaml --params=params.yaml
+    deps: 
+      - src/stage_02_split_data.py
+      - src/utils/all_utils.py
+      - config/config.yaml
+      - artifacts/raw_local_dir/data.csv
+    params:
+      - base.random_state
+      - base.test_size
+    outs: 
+      - artifacts/split_local_dir/train.csv
+      - artifacts/split_local_dir/test.csv
+  
+  train: 
+    cmd: python src/stage_03_train.py --config=config/config.yaml --params=params.yaml
+    deps: 
+      - src/stage_03_train.py
+      - src/utils/all_utils.py
+      - config/config.yaml
+      - artifacts/split_local_dir/train.csv
+    params:
+      - model_params.RF.random_state
+      - model_params.RF.n_estimators
+      - model_params.RF.n_jobs
+    outs:
+      - artifacts/model_dir/pipeline.model
